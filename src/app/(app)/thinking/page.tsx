@@ -176,23 +176,29 @@ const List = () => {
       return acc + cur.length
     }, 0)
 
-    animate(
-      'li',
-      {
-        opacity: 1,
-        y: 0,
-      },
-      {
-        duration: 0.2,
-        delay: stagger(0.1, {
-          startDelay: 0.15,
-          from: count ? count - FETCH_SIZE : 0,
-        }),
-      },
-    )
+    // Check if there are elements to animate before calling animate
+    requestAnimationFrame(() => {
+      const elements = scope.current?.querySelectorAll('li')
+      if (elements && elements.length > 0) {
+        animate(
+          'li',
+          {
+            opacity: 1,
+            y: 0,
+          },
+          {
+            duration: 0.2,
+            delay: stagger(0.1, {
+              startDelay: 0.15,
+              from: count ? count - FETCH_SIZE : 0,
+            }),
+          },
+        )
+      }
+    })
   }, [data])
 
-  if (isLoading) <Loading useDefaultLoadingText />
+  if (isLoading) return <Loading useDefaultLoadingText />
 
   return (
     <ul ref={scope}>
