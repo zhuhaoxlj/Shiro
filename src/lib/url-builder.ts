@@ -9,7 +9,7 @@ import { isDev } from '~/lib/env'
 import { getAggregationData } from '~/providers/root/aggregation-data-provider'
 
 export function urlBuilder(path = '') {
-  if (isDev) return new URL(path, 'http://localhost:2323')
+  if (isDev) return new URL(path, 'http://127.0.0.1:2323')
   return new URL(path, getAggregationData()?.url.webUrl)
 }
 
