@@ -33,7 +33,24 @@ function setupIo(config: { url: string; socket_session_id: string }) {
    * @param {any} payload
    */
   ws.on('message', (payload) => {
-    console.info('ws', payload)
+    console.info('ws received message:', payload)
+
+    // 检查是否为活动更新消息
+    try {
+      if (typeof payload === 'string') {
+        const parsed = JSON.parse(payload)
+        if (parsed.type === 'ACTIVITY_UPDATE_PRESENCE') {
+          console.info('Activity presence update received:', parsed.data)
+        }
+      } else if (payload?.type === 'ACTIVITY_UPDATE_PRESENCE') {
+        console.info(
+          'Activity presence update received (object):',
+          payload.data,
+        )
+      }
+    } catch (e) {
+      console.error('Error parsing message payload:', e)
+    }
 
     boardcast({
       type: 'message',

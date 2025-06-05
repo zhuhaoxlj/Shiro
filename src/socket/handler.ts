@@ -67,6 +67,39 @@ export const eventHandler = (
       break
     }
 
+    case EventTypes.ACTIVITY_UPDATE_PRESENCE: {
+      // 记录收到的活动信息
+      console.log('[Socket] Received ACTIVITY_UPDATE_PRESENCE event:', data)
+
+      // 提取显示名称和位置信息
+      const { displayName, position, roomName, identity } = data
+
+      // 显示通知
+      if (displayName) {
+        // 如果有显示名称，展示软件信息
+        console.log(`[Socket] User ${identity} is using ${displayName}`)
+        setActivityProcessInfo({
+          name: displayName,
+          iconBase64: '',
+        })
+
+        console.info(
+          `[作者活动信息] User ${identity} is using ${displayName}`,
+          123,
+        )
+      }
+
+      // 如果有阅读位置信息
+      if (typeof position === 'number') {
+        console.log(
+          `[Socket] User ${identity} is at position ${position} in ${roomName}`,
+        )
+      }
+
+      trackerRealtimeEvent('Activity Presence Update')
+      break
+    }
+
     case EventTypes.POST_UPDATE: {
       const post = data as PostModel
       const currentData = getGlobalCurrentPostData()

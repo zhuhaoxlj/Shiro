@@ -9,18 +9,15 @@ import {
   memo,
   useContext,
   useDeferredValue,
-  useEffect,
   useMemo,
 } from 'react'
 
-import { setActivityMediaInfo, setActivityProcessInfo } from '~/atoms/activity'
 import { useActivity } from '~/atoms/hooks'
 import { ImpressionView } from '~/components/common/ImpressionTracker'
 import { FloatPopover } from '~/components/ui/float-popover'
 import { softBouncePreset } from '~/constants/spring'
 import { TrackerAction } from '~/constants/tracker'
 import { usePageIsActive } from '~/hooks/common/use-is-active'
-import { apiClient } from '~/lib/request'
 import {
   useAggregationSelector,
   useAppConfigSelector,
@@ -62,59 +59,10 @@ const ActivityIcon = memo(() => {
   const activityConfig = useAppConfigSelector(
     (config) => config.module.activity,
   )
-  const { enable = false, endpoint = '/fn/ps/update' } = activityConfig || {}
+  const { enable = false } = activityConfig || {}
   const activity = useActivity()
 
   const isPageActive = usePageIsActive()
-  const { data } = useQuery({
-    queryKey: ['activity'],
-    queryFn: async () =>
-      await apiClient
-        .proxy(endpoint)
-        .post<{
-          processName: string
-          processInfo?: {
-            name: string
-            iconBase64?: string
-            iconUrl?: string
-            description?: string
-          }
-          mediaInfo?: {
-            title: string
-            artist: string
-          }
-        }>()
-        .then((res) => res)
-        .catch(() => ({
-          processName: '',
-          processInfo: undefined,
-          mediaInfo: undefined,
-        })),
-    refetchInterval: 1000 * 5 * 60,
-    refetchOnMount: 'always',
-    retry: false,
-    refetchOnReconnect: true,
-    refetchOnWindowFocus: 'always',
-    enabled: enable && isPageActive,
-    meta: {
-      persist: false,
-    },
-  })
-
-  useEffect(() => {
-    if (!data) return
-    if (data.mediaInfo) {
-      setActivityMediaInfo(data.mediaInfo)
-    } else {
-      setActivityMediaInfo(null)
-    }
-    setActivityProcessInfo({
-      name: data.processInfo?.name || data.processName,
-      iconUrl: data.processInfo?.iconUrl,
-      iconBase64: data.processInfo?.iconBase64,
-      description: data.processInfo?.description,
-    })
-  }, [data])
 
   const ownerName = useAggregationSelector((data) => data.user.name)
 

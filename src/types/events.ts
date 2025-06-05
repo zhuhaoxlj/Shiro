@@ -45,4 +45,5 @@ export enum SocketEmitEnum {
   Join = 'join',
   Leave = 'leave',
   UpdateSid = 'updateSid',
+  Message = 'message',
 }

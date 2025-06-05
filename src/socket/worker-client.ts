@@ -79,6 +79,16 @@ class SocketWorker {
           break
         }
         case 'message': {
+          if (
+            typeof payload === 'object' &&
+            payload.type === 'ACTIVITY_UPDATE_PRESENCE'
+          ) {
+            console.info(
+              '[worker-client] Received activity presence update:',
+              payload,
+            )
+          }
+
           const typedPayload = payload as string | Record<'type' | 'data', any>
           if (typeof typedPayload !== 'string') {
             return this.handleEvent(
@@ -86,11 +96,28 @@ class SocketWorker {
               camelcaseKeys(typedPayload.data),
             )
           }
-          const { data, type } = JSON.parse(typedPayload) as {
-            data: any
-            type: EventTypes
+
+          try {
+            const { data, type } = JSON.parse(typedPayload) as {
+              data: any
+              type: EventTypes
+            }
+
+            if (type === 'ACTIVITY_UPDATE_PRESENCE') {
+              console.info(
+                '[worker-client] Parsed activity presence update:',
+                data,
+              )
+            }
+
+            this.handleEvent(type, camelcaseKeys(data))
+          } catch (error) {
+            console.error(
+              '[worker-client] Error parsing message payload:',
+              error,
+              typedPayload,
+            )
           }
-          this.handleEvent(type, camelcaseKeys(data))
         }
       }
     }
