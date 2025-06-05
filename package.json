@@ -99,6 +99,7 @@
     "remove-markdown": "0.6.0",
     "rss": "1.2.2",
     "server-only": "^0.0.1",
+    "sharp": "^0.34.2",
     "socket.io-client": "4.8.1",
     "sonner": "2.0.3",
     "tailwind-merge": "3.3.0",
