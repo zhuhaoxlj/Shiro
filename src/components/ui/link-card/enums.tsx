@@ -12,4 +12,5 @@ export enum LinkCardSource {
   Arxiv = 'arxiv',
   QQMusicSong = 'qq-music-song',
   NeteaseMusicSong = 'netease-music-song',
+  Generic = 'generic',
 }

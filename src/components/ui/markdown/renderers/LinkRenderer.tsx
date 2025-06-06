@@ -227,6 +227,17 @@ export const BlockLinkRenderer = ({
           />
         )
       }
+
+      default: {
+        // 默认情况下，使用通用链接卡片
+        return (
+          <LinkCard
+            fallbackUrl={url.toString()}
+            source={LinkCardSource.Generic}
+            id={url.toString()}
+          />
+        )
+      }
     }
   }, [fallbackElement, href, tmdbEnabled, url])
 

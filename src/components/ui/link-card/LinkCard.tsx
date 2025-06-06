@@ -99,6 +99,7 @@ const LinkCardImpl: FC<LinkCardProps> = (props) => {
         [LinkCardSource.QQMusicSong]: fetchQQMusicSongData,
         [LinkCardSource.NeteaseMusicSong]: fetchNeteaseMusicSongData,
         [LinkCardSource.Bangumi]: fetchBangumiData,
+        [LinkCardSource.Generic]: fetchGenericLinkData,
       } as Record<LinkCardSource, FetchObject>
       if (tmdbEnabled)
         fetchDataFunctions[LinkCardSource.TMDB] = fetchTheMovieDBData
@@ -837,6 +838,68 @@ const fetchNeteaseMusicSongData: FetchObject = {
     } catch (err) {
       console.error('Error fetching NeteaseMusic song data:', err)
       throw err
+    }
+  },
+}
+
+const fetchGenericLinkData: FetchObject = {
+  isValid: (id) => {
+    // 所有URL都是有效的
+    return (
+      id.length > 0 && (id.startsWith('http://') || id.startsWith('https://'))
+    )
+  },
+  fetch: async (id, setCardInfo, setFullUrl) => {
+    try {
+      // 设置初始加载状态
+      setCardInfo({
+        title: '加载中...',
+        desc: id,
+      })
+
+      // 调用我们的API端点获取链接预览
+      const response = await fetch('/api/linkpreview', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url: id }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch link preview')
+      }
+
+      const data = await response.json()
+
+      // 设置卡片信息
+      setCardInfo({
+        title: data.title || new URL(id).hostname,
+        desc: data.description || id,
+        image: data.favicon,
+        color: uniqolor(new URL(id).hostname, {
+          saturation: [30, 35],
+          lightness: [60, 70],
+        }).color,
+      })
+
+      setFullUrl(id)
+    } catch (err) {
+      console.error('Error fetching generic link data:', err)
+      // 出错时至少显示域名
+      try {
+        const url = new URL(id)
+        setCardInfo({
+          title: url.hostname,
+          desc: id,
+        })
+      } catch {
+        setCardInfo({
+          title: '无法加载链接',
+          desc: id,
+        })
+      }
+      setFullUrl(id)
     }
   },
 }

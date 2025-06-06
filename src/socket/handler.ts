@@ -72,12 +72,16 @@ export const eventHandler = (
       console.log('[Socket] Received ACTIVITY_UPDATE_PRESENCE event:', data)
 
       // 提取显示名称和位置信息
-      const { displayName, position, roomName, identity } = data
+      const { displayName, position, roomName, identity, title, artist } = data
 
       // 显示通知
       if (displayName) {
         // 如果有显示名称，展示软件信息
-        console.log(`[Socket] User ${identity} is using ${displayName}`)
+        console.log(`音乐信息 ${title}---${artist}`)
+        setActivityMediaInfo({
+          title,
+          artist,
+        })
         setActivityProcessInfo({
           name: displayName,
           iconBase64: '',
