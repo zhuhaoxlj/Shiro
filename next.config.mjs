@@ -12,6 +12,7 @@ process.title = 'Shiro (NextJS)'
 
 const env = config().parsed || {}
 const isProd = process.env.NODE_ENV === 'production'
+const disableCodeInspector = process.env.DISABLE_CODE_INSPECTOR === 'true'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -93,9 +94,12 @@ let nextConfig = {
       bufferutil: 'commonjs bufferutil',
     })
 
-    config.plugins.push(
-      codeInspectorPlugin({ bundler: 'webpack', hotKeys: ['metaKey'] }),
-    )
+    // Only add the code inspector plugin if not explicitly disabled
+    if (!disableCodeInspector) {
+      config.plugins.push(
+        codeInspectorPlugin({ bundler: 'webpack', hotKeys: ['metaKey'] }),
+      )
+    }
 
     return config
   },

@@ -13,6 +13,7 @@
     "build": "cross-env NODE_ENV=production NODE_OPTIONS=--max_old_space_size=4096 next build",
     "build:ci": "cross-env NODE_ENV=production NODE_OPTIONS=--max_old_space_size=4096 NEXT_TELEMETRY_DISABLED=1 CI=true next build",
     "dev": "cross-env NODE_ENV=development next dev -p 2323",
+    "dev:no-inspector": "cross-env NODE_ENV=development DISABLE_CODE_INSPECTOR=true next dev -p 2323",
     "dev:turbo": "cross-env NODE_ENV=development next dev -p 2323 --turbo",
     "lint": "eslint --fix",
     "prepare": "pnpm exec simple-git-hooks && test -f .env || cp .env.template .env",
